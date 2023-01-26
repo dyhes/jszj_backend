@@ -1,14 +1,15 @@
+version: "3.3"
 services:
   postgresdb:
     image: postgres:latest
     restart: unless-stopped
     env_file: ./.env
     environment:
-      - POSTGRES_USER=$POSTGRESDB_USER
+      - POSTGRES_USER=${POSTGRESDB_USER}
       - POSTGRES_PASSWORD=$POSTGRESDB_PASSWORD
       - POSTGRES_DB=jszj
     ports:
-      - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
+      - ${POSTGRESDB_LOCAL_PORT}:${POSTGRESDB_DOCKER_PORT}
     volumes:
       - db:/var/lib/POSTGRES
     networks:
@@ -20,7 +21,7 @@ services:
     restart: on-failure
     env_file: ./.env
     ports:
-      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+      - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
     environment:
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.url"  : "jdbc:postgresql://postgresdb:5432/jszj",
