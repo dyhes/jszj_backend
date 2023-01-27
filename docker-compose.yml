@@ -1,6 +1,7 @@
 version: "3.3"
 services:
   postgresdb:
+    hostname: localhost
     image: postgres:latest
     restart: unless-stopped
     env_file: ./.env
@@ -15,6 +16,7 @@ services:
     networks:
       - mynet
   app:
+    hostname: localhost
     depends_on:
       - postgresdb
     build: .
@@ -23,6 +25,7 @@ services:
     ports:
       - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
     environment:
+      DB_HOST: postgresdb # untested, but there should be a way to pass this in
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.url"  : "jdbc:postgresql://postgresdb:5432/jszj",
         "spring.datasource.username" : "$POSTGRESDB_USER",
