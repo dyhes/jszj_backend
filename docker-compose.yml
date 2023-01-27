@@ -4,8 +4,6 @@ services:
     image: postgres:latest
     restart: unless-stopped
     env_file: ./.env
-    expose:
-      - 5432
     environment:
       - POSTGRES_USER=${POSTGRESDB_USER}
       - POSTGRES_PASSWORD=$POSTGRESDB_PASSWORD
@@ -14,35 +12,25 @@ services:
       - ${POSTGRESDB_LOCAL_PORT}:${POSTGRESDB_DOCKER_PORT}
     volumes:
       - db:/var/lib/POSTGRES
-    networks:
-      - mynet
   app:
     depends_on:
       - postgresdb
     build: .
-    links:
-      - "postgresdb:localhost"
     restart: on-failure
     env_file: ./.env
     ports:
       - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
-    expose:
-      - 8000
     environment: # untested, but there should be a way to pass this in
       SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url"  : "jdbc:postgresql://localhost:5432/jszj",
+        "spring.datasource.url"  : "jdbc:postgresql://postgresdb:5432/jszj",
         "spring.datasource.username" : "$POSTGRESDB_USER",
         "spring.datasource.password" : "$POSTGRESDB_PASSWORD",
         "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.PostgreSQLDialect",
         "spring.jpa.hibernate.ddl-auto" : "update"
       }'
-    networks:
-      - mynet
     volumes:
       - .m2:/root/.m2
     stdin_open: true
     tty: true
 volumes:
   db:
-networks:
-  mynet:
